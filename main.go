@@ -56,6 +56,9 @@ type PcfExtConfig struct {
 	ADMIN_USER          string
 	ADMIN_PASSWORD      string
 	APP_DETAIL_INTERVAL string
+	REDIS_HOST          string
+	REDIS_PORT          string
+	REDIS_PASSWORD      string
 }
 
 type ValueMetricFilterStruct struct {
@@ -286,7 +289,7 @@ func main() {
 	}
 
 	//start AppManager to managge application data
-	appManager = NewAppManager(client, appDetailsInterval)
+	appManager = NewAppManager(client, appDetailsInterval, &pcfExtendedConfig)
 	appManager.Start()
 
 	// consume PCF logs
@@ -667,20 +670,20 @@ func transformCounterEvent(cfEvent *events.Envelope, nrEvent map[string]interfac
 func addAppDetailInfo(nrEvent map[string]interface{}, appGUID string) {
 	// add app detail info to insights event
 	appData := appManager.GetAppData(appGUID)
-	nrEvent["appInfoUpdated"] = appData.timestamp
-	nrEvent["appName"] = appData.name
-	nrEvent["appGuid"] = appData.guid
-	nrEvent["appCreated"] = appData.createdTime
-	nrEvent["appLastUpdated"] = appData.lastUpdated
-	nrEvent["appInstances"] = strconv.FormatInt(int64(appData.instances), 10)
-	nrEvent["appStackGuid"] = appData.stackGUID
-	nrEvent["appState"] = appData.state
-	nrEvent["diegoContainer"] = strconv.FormatBool(appData.diego)
-	nrEvent["appSshEnabled"] = strconv.FormatBool(appData.sshEnabled)
-	nrEvent["appSpaceName"] = appData.spaceName
-	nrEvent["appSpaceGuid"] = appData.spaceGUID
-	nrEvent["appOrgName"] = appData.orgName
-	nrEvent["appOrgGuid"] = appData.orgGUID
+	nrEvent["appInfoUpdated"] = appData.Timestamp
+	nrEvent["appName"] = appData.Name
+	nrEvent["appGuid"] = appData.Guid
+	nrEvent["appCreated"] = appData.CreatedTime
+	nrEvent["appLastUpdated"] = appData.LastUpdated
+	nrEvent["appInstances"] = strconv.FormatInt(int64(appData.Instances), 10)
+	nrEvent["appStackGuid"] = appData.StackGUID
+	nrEvent["appState"] = appData.State
+	nrEvent["diegoContainer"] = strconv.FormatBool(appData.Diego)
+	nrEvent["appSshEnabled"] = strconv.FormatBool(appData.SshEnabled)
+	nrEvent["appSpaceName"] = appData.SpaceName
+	nrEvent["appSpaceGuid"] = appData.SpaceGUID
+	nrEvent["appOrgName"] = appData.OrgName
+	nrEvent["appOrgGuid"] = appData.OrgGUID
 }
 
 // process ContainerMetric events to new relic event format

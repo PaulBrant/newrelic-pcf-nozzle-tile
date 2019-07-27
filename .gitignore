@@ -5,4 +5,4 @@ vendor/
 
 tile-history.yml
 main
-run_nozzle.sh
+run_nozzle*.sh
