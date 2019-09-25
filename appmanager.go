@@ -80,6 +80,9 @@ func (am *AppManager) initRedisClient() {
 	}
 	logger.Printf("pong result: %s\n", pong)
 	am.redisClient = client
+	if nozzleInstanceId != "0" {
+		am.subscribeToAppUpdates()
+	}
 }
 
 //Start starts the app manager
@@ -94,9 +97,6 @@ func (am *AppManager) Start() {
 	go func() {
 		if am.redisClient != nil {
 			defer am.redisClient.Close()
-			if nozzleInstanceId != "0" {
-				am.subscribeToAppUpdates()
-			}
 		}
 		for {
 			select {
